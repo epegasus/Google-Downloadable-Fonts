@@ -3,7 +3,7 @@ package dev.pegasus.googledownloadablefonts.helper
 import android.content.Context
 import android.graphics.Typeface
 import android.os.Handler
-import android.os.Looper
+import android.os.HandlerThread
 import android.util.Log
 import android.widget.TextView
 import androidx.core.provider.FontRequest
@@ -37,6 +37,12 @@ class FontManager(private val context: Context) {
                 Log.d(TAG, "onTypefaceRequestFailed: called")
             }
         }
-        FontsContractCompat.requestFont(context, request, callback, Handler(Looper.getMainLooper()))
+        FontsContractCompat.requestFont(context, request, callback, getHandlerThreadHandler())
+    }
+
+    private fun getHandlerThreadHandler(): Handler {
+        val handlerThread = HandlerThread("fonts")
+        handlerThread.start()
+        return Handler(handlerThread.looper)
     }
 }
